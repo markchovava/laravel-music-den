@@ -136,11 +136,12 @@ class AuthController extends Controller
             'status' => 1,
         ]);
     }
+    
     public function registerByGmail(Request $request){
         $user = User::where('email', $request->email)->first();
         if(isset($user)){
             return response()->json([
-                'email_message' => 'Email is already registered, please login.',
+                'message' => 'Email is already registered, please login.',
                 'status' => 0,
             ]);
         }
@@ -156,6 +157,8 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Created Successfully.',
+            'auth_token' => $data->createToken($data->email)->plainTextToken,
+            'role_level' => !empty($data->role_level) ? $data->role_level : 1,
             'status' => 1,
         ]);
     }
