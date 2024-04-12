@@ -33,9 +33,9 @@ class UserTrackController extends Controller
         $track = UserTrack::where('name', 'LIKE', $request->name)
                  ->where('user_id', $user_id)->first();
         if(isset($track)){
-            $track->image = $request->image;
-            $track->album = !empty($request->album) ? $request->album : '';
-            $track->tags = !empty($request->tags) ? $request->tags : '';
+            if(!empty($request->image)){ $track->image = $request->image; }
+            if(!empty($request->album)){ $track->album = $request->album; }
+            if(!empty($request->tags)){ $track->tags = $request->tags; }
             $track->updated_at = now();
             $track->save();
             return response()->json([
@@ -47,15 +47,15 @@ class UserTrackController extends Controller
         $data->user_id = $user_id;
         $data->name = $request->name;
         $data->artist = $request->artist;
-        $data->image = $request->image;
-        $data->album = !empty($request->album) ? $request->album : '';
-        $data->tags = !empty($request->tags) ? $request->tags : '';
+        if(!empty($request->image)) { $data->image = $request->image; }
+        if(!empty($request->album)){ $data->album = $request->album; }
+        if(!empty($request->tags)){ $data->tags = $request->tags; }
         $data->updated_at = now();
         $data->created_at = now();
         $data->save();
         return response()->json([
             'data' => new UserTrackResource($data),
-            'message' => 'Saved successfully.'
+            'message' => 'Liked successfully.'
         ]);
 
     }
@@ -65,7 +65,7 @@ class UserTrackController extends Controller
         $data = UserTrack::find($id);
         $data->delete();
         return response()->json([
-            'message' => 'Deleted successfully.'
+            'message' => 'Unliked Successfully.'
         ]);
     }
     

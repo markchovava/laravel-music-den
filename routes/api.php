@@ -40,6 +40,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['middleware' => ['auth:sanctum']], function() {
 
     Route::get('/logout', [AuthController::class, 'logout']);
+    Route::get('/auth-user', [AuthController::class, 'view']);
+    Route::post('/auth-user', [AuthController::class, 'update']);
+    Route::post('/password', [AuthController::class, 'password']);
 
     Route::prefix('user-artist')->group(function() {
         Route::get('/', [UserArtistController::class, 'index']);

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('user_id')->nullable();
             $table->string('mbid')->nullable();
             $table->string('name')->nullable();
-            $table->string('description')->nullable();
+            $table->longText('description')->nullable();
             $table->string('image')->nullable();
             $table->timestamps();
         });

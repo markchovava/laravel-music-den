@@ -31,6 +31,9 @@ class UserArtistController extends Controller
         $artist = UserArtist::where('name', 'LIKE', $request->name)
                  ->where('user_id', $user_id)->first();
         if(isset($artist)){
+            if(!empty($request->mbid)){ $artist->mbid = $request->mbid; }
+            if(!empty($request->image)){ $artist->image = $request->image; }
+            if(!empty($request->description)){ $artist->description = $request->description; }
             return response()->json([
                 'data' => new UserArtistResource($artist),
                 'message' => 'Already liked.',
@@ -38,14 +41,14 @@ class UserArtistController extends Controller
         }
         $data = new UserArtist();
         $data->user_id = $user_id;
-        $data->name = $request->name;
-        $data->mbid = $request->mbid;
-        $data->image = $request->image;
-        $data->description = !empty($request->description) ? $request->description : '';
+        if(!empty($request->name)){ $data->name = $request->name; }
+        if(!empty($request->mbid)){ $data->mbid = $request->mbid; }
+        if(!empty($request->image)){ $data->image = $request->image; }
+        if(!empty($request->description)){ $data->description = $request->description; }
         $data->save();
         return response()->json([
             'data' => $data,
-            'message' => 'Saved successfully.'
+            'message' => 'Liked successfully.'
         ]);
 
     }
@@ -55,7 +58,7 @@ class UserArtistController extends Controller
         $data = UserArtist::find($id);
         $data->delete();
         return response()->json([
-            'message' => 'Deleted successfully.'
+            'message' => 'Unliked Successfully.'
         ]);
     }
     

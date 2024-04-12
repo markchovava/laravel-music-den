@@ -37,13 +37,13 @@ class UserAlbumController extends Controller
         }
         $data = new UserAlbum();
         $data->user_id = Auth::user()->id;
-        $data->name = $request->name;
-        $data->artist = $request->artist;
-        $data->image = $request->image;
+        if(!empty($request->name)){ $data->name = $request->name; }
+        if(!empty($request->artist)){ $data->artist = $request->artist; }
+        if(!empty($request->image)){ $data->image = $request->image; }
         $data->save();
         return response()->json([
             'data' =>new UserAlbumResource($data),
-            'message' => 'Saved successfully.'
+            'message' => 'Liked successfully.'
         ]);
 
     }
@@ -53,7 +53,7 @@ class UserAlbumController extends Controller
         $data = UserAlbum::find($id);
         $data->delete();
         return response()->json([
-            'message' => 'Deleted successfully.'
+            'message' => 'Unliked Successfully.'
         ]);
     }
 

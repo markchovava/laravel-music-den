@@ -16,70 +16,73 @@ class UserController extends Controller
         return substr($shuffled, 0, $length);
     }
 
+
     public function index(Request $request){
-        $user_id = Auth::user()->id;
         if(!empty($request->search)){
-            $data = User::where('name', 'LIKE', '%' . $request->search . '%')
-                    ->paginate(15);
+            $data = User::where('name', 'LIKE', '%' . $request->search . '%')->paginate(12);
         } else{
-            $data = User::whereNot('id', $user_id)->orderBy('updated_at', 'desc')
-                    ->paginate(15);
+            $data = User::orderBy('name', 'asc')->orderBy('created_at', 'desc')->paginate(12);
         }
-   
         return UserResource::collection($data);
     }
 
+    public function view($id){
+        $data = User::find($id);
+        return response()->json([
+            'data' => new UserResource($data),
+        ]);
+    }
+
     public function store(Request $request){
-        $code = $this->generateRandomText();
         $data = new User();
+        $data->role_level = $request->role_level;
         $data->first_name = $request->first_name;
         $data->last_name = $request->last_name;
         $data->name = $data->first_name . ' ' . $data->last_name;
+        $data->is_agree = $request->is_agree;
         $data->dob = $request->dob;
         $data->gender = $request->gender;
         $data->email = $request->email;
-        $data->role_level = !empty($request->role_level) ? $request->role_level : 1;
-        $data->code = $code;
-        $data->password = Hash::make($code);
-        $data->created_at = now();
-        $data->updated_at = now();
+        $data->created_by_social = 0;
+        $data->code = $this->generateRandomText();
+        $data->password = Hash::make($data->code);
         $data->save();
 
         return response()->json([
-            'message' => 'Saved Successfully.',
-            'data' => new UserResource($data)
+            'message' => 'Saved successfully.',
+            'data' => new UserResource($data),
         ]);
     }
 
     public function update(Request $request, $id){
         $data = User::find($id);
-        $data->name = $request->name;
+        $data->role_level = $request->role_level;
+        $data->first_name = $request->first_name;
+        $data->last_name = $request->last_name;
+        $data->name = $data->first_name . ' ' . $data->last_name;
+        $data->is_agree = $request->is_agree;
         $data->dob = $request->dob;
         $data->gender = $request->gender;
-        $data->phone = $request->phone;
         $data->email = $request->email;
-        $data->role_level = $request->role_level;
-        $data->address = $request->address;
-        $data->id_number = $request->id_number;
-        $data->updated_at = now();
+        $data->phone = $request->phone;
+        $data->created_by_social = 0;
         $data->save();
 
         return response()->json([
-            'message' => 'Saved Successfully.',
-            'data' => new UserResource($data)
+            'message' => 'Saved successfully.',
+            'data' => new UserResource($data),
         ]);
     }
 
-    public function view($id){
-        $data = User::with(['role'])->find($id);
-        return new UserResource($data);
-    }
 
     public function delete($id){
         $data = User::find($id);
         $data->delete();
+
         return response()->json([
-            'message' => 'Deleted Successfully.'
+            'message' => 'Deleted successfully.',
         ]);
     }
+
+    
 }
